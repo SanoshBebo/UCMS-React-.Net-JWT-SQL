@@ -1,35 +1,32 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import StudentHome from "./pages/student/StudentHome";
+import ProfessorHome from "./pages/professor/ProfessorHome";
+import AdminHome from "./pages/admin/AdminHome";
+import Login from "./pages/login-register/Login";
+import CoursePage from "./pages/admin/CoursePage";
+import SubjectPage from "./pages/admin/SubjectPage";
+import VenuePage from "./pages/admin/VenuePage";
+import CourseDetails from "./pages/admin/CourseDetails";
+import SemeserDetails from "./pages/admin/SemeserDetails";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Router>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/admin-page" element={<AdminHome />} />
+        <Route path="/admin/courses" element={<CoursePage />} />
+        <Route path="/admin/subjects" element={<SubjectPage />} />
+        <Route path="/admin/venues" element={<VenuePage />} />
+        <Route path="/admin/course/:id" element={<CourseDetails />} />
+        <Route path="/admin/semester/:id" element={<SemeserDetails />} />
+        <Route path="/professor-page" element={<ProfessorHome />} />
+        <Route path="/student-page" element={<StudentHome />} />
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
