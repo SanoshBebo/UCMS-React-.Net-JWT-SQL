@@ -59,6 +59,7 @@ export const GetAssignedSubjects = async (semesterId) => {
     const response = await axios.get(
       `/api/Course/getassignedsubject/${semesterId}`
     );
+    console.log(response.data);
     return response.data; // Return the response data
   } catch (error) {
     console.error(error);
@@ -106,21 +107,6 @@ export const RemoveProfessorFromSubject = async (
       `api/Course/removeprofessor/${SubjectId}/${SemesterId}/${ProfessorId}`
     );
     return response.data;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
-export const GetAssignedProfessorsForSubject = async (
-  subjectId,
-  semesterId
-) => {
-  try {
-    const response = await axios.get(
-      `/api/Course/getassignedprofessorsforsubject/${subjectId}/${semesterId}`
-    );
-    return response.data; // Return the response data
   } catch (error) {
     console.error(error);
     throw error;

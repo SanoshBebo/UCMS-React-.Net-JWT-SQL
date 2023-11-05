@@ -5,37 +5,59 @@ import {
   GetSubjects,
   UpdateSubject,
 } from "../../api/Subject";
-import { Box, Button, Modal, Typography } from "@mui/material";
+import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  TextField,
+  Typography,
+  Box,
+} from "@mui/material";
+import { toast, ToastContainer } from "react-toastify";
 
 const SubjectPage = () => {
   const [subjects, setSubjects] = useState([]);
-
   const [subjectName, setSubjectName] = useState("");
   const [editSubjectName, setEditSubjectName] = useState("");
-  const [teachingHours, setTeachingHours] = useState();
-  const [editTeachingHours, setEditTeachingHours] = useState();
+  const [teachingHours, setTeachingHours] = useState("");
+  const [editTeachingHours, setEditTeachingHours] = useState("");
   const [editSubjectId, setEditSubjectId] = useState("");
-
-  const [courseDurationInYears, setCourseDurationInYears] = useState();
-  const [batch, setBatch] = useState("");
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
   const [isUpdateProductModalOpen, setIsUpdateProductModalOpen] =
     useState(false);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] =
+    useState(false);
+  const [selectedSubject, setSelectedSubject] = useState(null);
   const [refresh, setRefresh] = useState(false);
 
   const openAddProductModal = () => {
     setIsAddProductModalOpen(true);
   };
-  const openUpdateProductModal = () => {
+
+  const openUpdateProductModal = (subject) => {
+    setEditSubjectName(subject.SubjectName);
+    setEditTeachingHours(subject.TeachingHours);
+    setEditSubjectId(subject.SubjectId);
     setIsUpdateProductModalOpen(true);
   };
 
+  const openDeleteConfirmation = (subject) => {
+    setSelectedSubject(subject);
+    setIsDeleteConfirmationOpen(true);
+  };
+
   const closeModal = () => {
-    setIsModalOpen(false);
-    setIsAddProductModalOpen(false); // Close the "Add Product" modal as well
+    setIsAddProductModalOpen(false);
     setIsUpdateProductModalOpen(false);
+    setIsDeleteConfirmationOpen(false);
   };
 
   const addSubject = () => {
@@ -46,17 +68,19 @@ const SubjectPage = () => {
       ProfessorAssigns: [],
       Lectures: [],
     };
-    console.log(subjectInfo);
 
     CreateSubject(subjectInfo)
       .then((response) => {
         console.log(response);
+        closeModal();
+        setRefresh(!refresh);
+        toast.success("Subject Added");
       })
       .catch((err) => {
+        toast.error(err.response.data);
+
         console.error(err);
       });
-
-    setRefresh(!refresh);
   };
 
   const updateSubject = () => {
@@ -68,32 +92,34 @@ const SubjectPage = () => {
       ProfessorAssigns: [],
       Lectures: [],
     };
-    console.log(subjectInfo);
 
     UpdateSubject(subjectInfo, editSubjectId)
       .then((response) => {
         console.log(response);
+        closeModal();
+        setRefresh(!refresh);
+        toast.success("Subject Updated");
       })
       .catch((err) => {
+        toast.error(err.response.data);
         console.error(err);
       });
-
-    setEditSubjectName("");
-    setEditTeachingHours();
-
-    setRefresh(!refresh);
   };
 
-  const deleteSubject = (id) => {
-    DeleteSubject(id)
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-
-    setRefresh(!refresh);
+  const deleteSubject = () => {
+    if (selectedSubject) {
+      DeleteSubject(selectedSubject.SubjectId)
+        .then((response) => {
+          console.log(response);
+          closeModal();
+          setRefresh(!refresh);
+          toast.success("Subject Deleted");
+        })
+        .catch((err) => {
+          toast.error(err.response.data);
+          console.error(err);
+        });
+    }
   };
 
   useEffect(() => {
@@ -108,157 +134,135 @@ const SubjectPage = () => {
   }, [refresh]);
 
   return (
-    <div>
-      <div>
-        <div>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={openAddProductModal}
-          >
-            Add new Subject
-          </Button>
-        </div>
-      </div>
-      <div className="pb-5">
-        <ul className="grid grid-cols-4 gap-6 place-items-center">
-          {subjects.map((subject, index) => (
-            <li key={index} className={`w-full p-2 m-5`}>
-              <h1 className="text-center">{subject.SubjectName}</h1>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => {
-                  setEditSubjectName(subject.SubjectName);
-                  setEditTeachingHours(subject.TeachingHours);
-                  setEditSubjectId(subject.SubjectId);
-                  openUpdateProductModal();
-                }}
-                className="mt-3"
-              >
-                Edit
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => {
-                  deleteSubject(subject.SubjectId);
-                }}
-                className="mt-3"
-              >
-                Delete
-              </Button>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <Modal
-        open={isAddProductModalOpen}
-        onClose={closeModal}
+    <Container
+      maxWidth="lg"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        minHeight: "80vh",
+      }}
+    >
+      <div
         style={{
           display: "flex",
+          justifyContent: "space-between",
           alignItems: "center",
-          justifyContent: "center",
+          marginBottom: "20px",
+          flexDirection: "column",
+          gap: "15px",
         }}
       >
-        <Box
-          sx={{
-            backgroundColor: "#000",
-            color: "#000",
-            width: 400,
-            p: 4,
-            borderRadius: 4,
-            textAlign: "center",
-          }}
+        <Typography variant="h4">Subjects</Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={openAddProductModal}
         >
-          <Typography variant="h5" component="div" className="text-white">
-            Add Subject
-          </Typography>
-          <input
-            type="text"
+          Add New Subject
+        </Button>
+      </div>
+      <Grid container spacing={3}>
+        {subjects.map((subject) => (
+          <Grid item xs={12} sm={6} md={4} key={subject.SubjectId}>
+            <Card elevation={3}>
+              <CardContent>
+                <Typography variant="h5" component="div">
+                  {subject.SubjectName}
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Teaching Hours: {subject.TeachingHours}
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => openUpdateProductModal(subject)}
+                >
+                  Edit
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => openDeleteConfirmation(subject)}
+                >
+                  Delete
+                </Button>
+              </CardActions>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+      <Dialog open={isDeleteConfirmationOpen} onClose={closeModal}>
+        <DialogTitle>Delete Subject</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete the subject "
+            {selectedSubject?.SubjectName}"?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeModal}>Cancel</Button>
+          <Button onClick={deleteSubject} color="error">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={isAddProductModalOpen} onClose={closeModal}>
+        <DialogTitle>Add New Subject</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Subject Name"
             value={subjectName}
-            onChange={(e) => {
-              setSubjectName(e.target.value);
-            }}
-            placeholder="Subject Name"
-            className="my-2 p-2 w-full"
-            style={{ outline: "none" }}
+            onChange={(e) => setSubjectName(e.target.value)}
+            fullWidth
+            margin="normal"
           />
-          <input
+          <TextField
+            label="Teaching Hours"
             type="number"
             value={teachingHours}
-            onChange={(e) => {
-              setTeachingHours(e.target.value);
-            }}
-            placeholder="TeachingHours"
-            className="my-2 p-2 w-full"
-            style={{ outline: "none" }}
+            onChange={(e) => setTeachingHours(e.target.value)}
+            fullWidth
+            margin="normal"
           />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={addSubject}
-            className="mt-3"
-          >
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeModal}>Cancel</Button>
+          <Button onClick={addSubject} color="primary">
             Add Subject
           </Button>
-        </Box>
-      </Modal>
-      <Modal
-        open={isUpdateProductModalOpen}
-        onClose={closeModal}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Box
-          sx={{
-            backgroundColor: "#000",
-            color: "#000",
-            width: 400,
-            p: 4,
-            borderRadius: 4,
-            textAlign: "center",
-          }}
-        >
-          <Typography variant="h5" component="div" className="text-white">
-            Update Subject
-          </Typography>
-          <input
-            type="text"
+        </DialogActions>
+      </Dialog>
+      <Dialog open={isUpdateProductModalOpen} onClose={closeModal}>
+        <DialogTitle>Edit Subject</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Subject Name"
             value={editSubjectName}
-            onChange={(e) => {
-              setEditSubjectName(e.target.value);
-            }}
-            placeholder="Subject Name"
-            className="my-2 p-2 w-full"
-            style={{ outline: "none" }}
+            onChange={(e) => setEditSubjectName(e.target.value)}
+            fullWidth
+            margin="normal"
           />
-          <input
+          <TextField
+            label="Teaching Hours"
             type="number"
             value={editTeachingHours}
-            onChange={(e) => {
-              setEditTeachingHours(e.target.value);
-            }}
-            placeholder="TeachingHours"
-            className="my-2 p-2 w-full"
-            style={{ outline: "none" }}
+            onChange={(e) => setEditTeachingHours(e.target.value)}
+            fullWidth
+            margin="normal"
           />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              updateSubject(editSubjectId);
-            }}
-            className="mt-3"
-          >
-            udpate
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeModal}>Cancel</Button>
+          <Button onClick={updateSubject} color="primary">
+            Update
           </Button>
-        </Box>
-      </Modal>
-    </div>
+        </DialogActions>
+      </Dialog>
+      <ToastContainer position="top-right" autoClose={5000} />
+    </Container>
   );
 };
 

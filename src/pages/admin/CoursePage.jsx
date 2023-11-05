@@ -1,20 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { CreateCourse, GetAllCourse } from "../../api/Course";
 import { Link } from "react-router-dom";
-import { Box, Button, Modal, Typography } from "@mui/material";
+import {
+  Button,
+  Grid,
+  Modal,
+  Paper,
+  Select,
+  Typography,
+  TextField,
+  Box,
+} from "@mui/material";
 
 const CoursePage = () => {
   const [courses, setCourses] = useState([]);
-  const [dataLoaded, setDataLoaded] = useState(false); // Track whether data has been loaded
-
+  const [dataLoaded, setDataLoaded] = useState(false);
   const [courseName, setCourseName] = useState("");
-  const [year, setYear] = useState();
-  const [courseDurationInYears, setCourseDurationInYears] = useState();
+  const [year, setYear] = useState("");
+  const [courseDurationInYears, setCourseDurationInYears] = useState("");
   const [batch, setBatch] = useState("");
-
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [refresh, setRefresh] = useState(false);
 
   const openAddProductModal = () => {
@@ -45,8 +50,7 @@ const CoursePage = () => {
   };
 
   const closeModal = () => {
-    setIsModalOpen(false);
-    setIsAddProductModalOpen(false); // Close the "Add Product" modal as well
+    setIsAddProductModalOpen(false);
   };
 
   useEffect(() => {
@@ -62,33 +66,35 @@ const CoursePage = () => {
   }, [refresh]);
 
   return (
-    <div>
-      <div>
-        <div>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={openAddProductModal}
-          >
-            Add new Product
-          </Button>
-        </div>
-        <div></div>
-      </div>
+    <div className="m-10">
+      <Box my={2}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={openAddProductModal}
+        >
+          Add Course
+        </Button>
+      </Box>
       <div className="pb-5">
-        <ul className="grid grid-cols-4 gap-6 place-items-center">
+        <Grid container spacing={4}>
           {courses.map((course, index) => (
-            <li key={index} className={`w-full p-2 m-5`}>
-              <Link
-                to={`/admin/course/${course.CourseId}`}
-                className={`flex flex-col items-center gap-2`}
-              >
-                <h1 className="text-center">{course.CourseName}</h1>
-                <p className="text-center">Batch {course.Batch}</p>
-              </Link>
-            </li>
+            <Grid item xs={12} sm={6} md={4} key={index}>
+              <Paper elevation={3}>
+                <Link to={`/admin/course/${course.CourseId}`}>
+                  <div className="flex flex-col items-center gap-2 p-3">
+                    <Typography variant="h5" align="center">
+                      {course.CourseName}
+                    </Typography>
+                    <Typography variant="subtitle1" align="center">
+                      Batch {course.Batch}
+                    </Typography>
+                  </div>
+                </Link>
+              </Paper>
+            </Grid>
           ))}
-        </ul>
+        </Grid>
       </div>
       <Modal
         open={isAddProductModalOpen}
@@ -99,72 +105,50 @@ const CoursePage = () => {
           justifyContent: "center",
         }}
       >
-        <Box
-          sx={{
-            backgroundColor: "#000",
-            color: "#000",
-            width: 400,
-            p: 4,
-            borderRadius: 4,
-            textAlign: "center",
-          }}
+        <Paper
+          sx={{ width: 400, padding: 4, borderRadius: 4, textAlign: "center" }}
         >
-          <Typography variant="h5" component="div" className="text-white">
-            Add Product
+          <Typography variant="h5" component="div" color="primary">
+            Add Course
           </Typography>
-
-          <input
+          <TextField
             type="text"
             value={courseName}
-            onChange={(e) => {
-              setCourseName(e.target.value);
-            }}
+            onChange={(e) => setCourseName(e.target.value)}
             placeholder="Course Name"
-            className="my-2 p-2 w-full"
-            style={{ outline: "none" }}
+            fullWidth
           />
-          <input
+          <TextField
             type="number"
             value={year}
-            onChange={(e) => {
-              setYear(e.target.value);
-            }}
+            onChange={(e) => setYear(e.target.value)}
             placeholder="Year"
-            className="my-2 p-2 w-full"
-            style={{ outline: "none" }}
+            fullWidth
           />
-
-          <input
+          <TextField
             type="number"
             value={courseDurationInYears}
-            onChange={(e) => {
-              setCourseDurationInYears(e.target.value);
-            }}
+            onChange={(e) => setCourseDurationInYears(e.target.value)}
             placeholder="Course Duration In Years"
-            className="my-2 p-2 w-full"
-            style={{ outline: "none" }}
+            fullWidth
           />
-
-          <select
+          <Select
             value={batch}
-            onChange={(e) => {
-              setBatch(e.target.value);
-            }}
-            className="my-2 p-2 w-full"
-            style={{ outline: "none" }}
+            onChange={(e) => setBatch(e.target.value)}
+            fullWidth
           >
             <option value="January">January</option>
             <option value="July">July</option>
-          </select>
+          </Select>
           <Button
             variant="contained"
             color="primary"
             onClick={addCourse}
-            className="mt-3"
+            style={{ marginTop: 16 }}
           >
             Add Course
           </Button>
-        </Box>
+        </Paper>
       </Modal>
     </div>
   );

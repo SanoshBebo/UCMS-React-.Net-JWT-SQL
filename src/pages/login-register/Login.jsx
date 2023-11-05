@@ -21,6 +21,8 @@ const Login = () => {
   const dispatch = useDispatch();
 
   const toggleRegistration = () => {
+    setEmail("");
+    setPassword("");
     setInvalidCredentials(false);
     setIsRegistering(!isRegistering);
   };
@@ -36,20 +38,16 @@ const Login = () => {
     };
 
     try {
-      // Call the login function and await the response
       const response = await LoginCall(loginData);
-
-      if (response.Role) {
-        // Check if the login was successful
+      if (response.User.Role) {
         console.log("Login successful");
-        console.log(response);
-        dispatch(setUser(response));
-        localStorage.setItem("user", JSON.stringify(response));
-        if (response.Role == "student") {
+        dispatch(setUser(response.User));
+        localStorage.setItem("user", JSON.stringify(response.User));
+        if (response.User.Role == "student") {
           navigate("/student-page");
-        } else if (response.Role == "professor") {
+        } else if (response.User.Role == "professor") {
           navigate("/professor-page");
-        } else if (response.Role == "admin") {
+        } else if (response.User.Role == "admin") {
           navigate("/admin-page");
         }
       } else {
@@ -88,7 +86,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-400 flex flex-col justify-center items-center">
+    <div className="min-h-screen bg-gradient-to-r from-slate-500 to-blue-600 flex flex-col justify-center items-center">
       <div className="bg-white p-8 rounded shadow-md w-96 transition-transform transform hover:scale-105">
         <h2 className="text-2xl font-semibold mb-4 text-center ">
           {isRegistering ? "Customer Register" : "Customer Login"}
@@ -159,6 +157,7 @@ const Login = () => {
               >
                 <MenuItem value={"student"}>student</MenuItem>
                 <MenuItem value={"professor"}>professor</MenuItem>
+                <MenuItem value={"admin"}>admin</MenuItem>
               </Select>
             </FormControl>
           </Box>
@@ -178,25 +177,13 @@ const Login = () => {
             ? "Already have an account?"
             : "Don't have an account?"}{" "}
           <a
-            href="#"
-            className="text-blue-500 hover:underline transition-colors duration-300 ease-in-out"
+            className="text-blue-500 hover:cursor-pointer transition-colors duration-300 ease-in-out"
             onClick={toggleRegistration}
           >
             {isRegistering ? "Login" : "Sign up"}
           </a>
         </p>
       </div>
-      <Link to="/login">
-        <div className="p-2 text-white font-bold">Back to login</div>
-      </Link>
-      <p className="mt-4 text-center text-[15px]">
-        Continue without signing in
-        <Link to="/erichie">
-          <a className="text-blue-500 hover:underline transition-colors duration-300 ease-in-out p-2">
-            Click here
-          </a>
-        </Link>
-      </p>
     </div>
   );
 };

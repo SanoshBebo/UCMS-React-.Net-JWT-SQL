@@ -16,8 +16,9 @@ export const GetCompleteStudentInfo = async (userId) => {
 };
 
 export const RegisterCourse = async (courseId, userId) => {
+  console.log(courseId, userId);
   const response = await axios.post(
-    `api/Subjects/registercourse/${courseId}/${userId}`
+    `api/Student/registercourse/${courseId}/${userId}`
   );
   return response.data;
 };
@@ -35,8 +36,10 @@ export const ViewStudentLectures = async (userId, subjectId, semesterId) => {
 };
 
 export const BookLecture = async (lectureId, userId) => {
+  console.log(lectureId, userId);
   const response = await axios.post(
     `api/Student/booklecture/${lectureId}/${userId}`
   );
+  console.log(response);
   return response.data;
 };

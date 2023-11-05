@@ -1,23 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 
 const AdminHome = () => {
   return (
-    <div className="min-h-screen">
-      <div className="flex flex-row">
-        <div className="m-5">
+    <div className="min-h-screen bg-gradient-to-tr from-slate-500 to-blue-600">
+      <div className="flex justify-center items-center h-screen">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <Link to="/admin/courses">
-            <h1 className="p-5">courses</h1>
+            <div className="p-6 bg-white rounded-lg shadow-lg">
+              <h1 className="text-2xl font-semibold text-indigo-600">
+                Courses
+              </h1>
+            </div>
           </Link>
-        </div>
-        <div className="m-5">
+
           <Link to="/admin/subjects">
-            <h1 className="p-5">subjects</h1>
+            <div className="p-6 bg-white rounded-lg shadow-lg">
+              <h1 className="text-2xl font-semibold text-indigo-600">
+                Subjects
+              </h1>
+            </div>
           </Link>
-        </div>
-        <div className="m-5">
+
           <Link to="/admin/venues">
-            <h1 className="p-5">venues</h1>
+            <div className="p-6 bg-white rounded-lg shadow-lg">
+              <h1 className="text-2xl font-semibold text-indigo-600">Venues</h1>
+            </div>
           </Link>
         </div>
       </div>

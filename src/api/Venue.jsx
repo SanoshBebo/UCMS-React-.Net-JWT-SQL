@@ -2,12 +2,15 @@ import axios from "./AxiosConfig";
 
 export const GetVenueList = async () => {
   const response = await axios.get("/api/Venues/getvenuelist");
+  console.log(response);
   console.log(response.data);
+  return response.data;
 };
 
 export const GetVenueDetail = async (id) => {
   try {
     const response = await axios.get(`/api/Venues/getvenuedetail/${id}`);
+
     return response.data; // Return the response data
   } catch (error) {
     console.error(error);

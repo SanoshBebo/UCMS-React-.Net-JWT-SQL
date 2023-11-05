@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { GetCourseDetail } from "../../api/Course";
 import { Link } from "react-router-dom";
+import { Typography, Container, Grid, Card, CardContent } from "@mui/material";
 
 const CourseDetails = () => {
   const { id } = useParams();
@@ -10,30 +11,44 @@ const CourseDetails = () => {
   useEffect(() => {
     GetCourseDetail(id)
       .then((response) => {
-        setSemesters(response.Semesters);
+        const sortedSemesters = response.Semesters.sort((a, b) =>
+          a.SemesterName.localeCompare(b.SemesterName)
+        );
+        setSemesters(sortedSemesters);
         console.log(response);
       })
       .catch((err) => {
         console.error(err);
       });
   }, []);
+
   return (
-    <div>
-      <div className="pb-5">
-        <ul className="grid grid-cols-4 gap-6 place-items-center">
-          {semesters.map((semester, index) => (
-            <li key={index} className={`w-full p-2 m-5`}>
-              <Link
-                to={`/admin/semester/${semester.SemesterId}`}
-                className={`flex flex-col items-center gap-2`}
-              >
-                <h1 className="text-center">{semester.SemesterName}</h1>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
+    <Container>
+      <Typography
+        variant="h4"
+        color="black"
+        margin={4}
+        align="center"
+        gutterBottom
+      >
+        Semester Details
+      </Typography>
+      <Grid container spacing={2}>
+        {semesters.map((semester, index) => (
+          <Grid item xs={12} sm={6} md={4} key={index}>
+            <Link to={`/admin/semester/${semester.SemesterId}`}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6" color="primary" align="center">
+                    {semester.SemesterName}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Link>
+          </Grid>
+        ))}
+      </Grid>
+    </Container>
   );
 };
 

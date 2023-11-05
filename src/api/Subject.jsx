@@ -1,9 +1,13 @@
 import axios from "./AxiosConfig";
 
 export const GetSubjects = async () => {
-  const response = await axios.get("/api/Subjects/getsubjects");
-  console.log(response.data);
-  return response.data;
+  try {
+    const response = await axios.get("/api/Subjects/getsubjects");
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
 
 export const GetSubjectDetail = async (id) => {
