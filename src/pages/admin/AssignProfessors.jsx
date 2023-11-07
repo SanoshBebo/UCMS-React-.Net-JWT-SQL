@@ -20,12 +20,13 @@ const AssignProfessors = () => {
     AddProfessorToSubject(subjectid, id, selectedProfessorIds)
       .then((response) => {
         console.log(response);
+        setTimeout(() => {}, 4000);
+        setRefresh(!refresh);
       })
       .catch((err) => {
         console.error(err);
       });
-    setTimeout(() => {}, 4000);
-    setRefresh(!refresh);
+
   };
 
   const removeProfessor = (profId) => {
@@ -39,9 +40,6 @@ const AssignProfessors = () => {
         console.error(err);
       });
 
-    setTimeout(() => {}, 2000);
-
-    setRefresh(!refresh);
   };
 
   useEffect(() => {

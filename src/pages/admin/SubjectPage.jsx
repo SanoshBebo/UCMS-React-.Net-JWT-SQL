@@ -22,6 +22,7 @@ import {
   Box,
 } from "@mui/material";
 import { toast, ToastContainer } from "react-toastify";
+import { getSessionCache, removeSessionCache, setSessionCache } from "../../components/SessionStoreCache";
 
 const SubjectPage = () => {
   const [subjects, setSubjects] = useState([]);
@@ -61,6 +62,8 @@ const SubjectPage = () => {
   };
 
   const addSubject = () => {
+    removeSessionCache("adminsubjects");
+
     const subjectInfo = {
       SubjectName: subjectName,
       TeachingHours: teachingHours,
@@ -84,6 +87,8 @@ const SubjectPage = () => {
   };
 
   const updateSubject = () => {
+    removeSessionCache("adminsubjects");
+
     const subjectInfo = {
       SubjectId: editSubjectId,
       SubjectName: editSubjectName,
@@ -107,6 +112,8 @@ const SubjectPage = () => {
   };
 
   const deleteSubject = () => {
+    removeSessionCache("adminsubjects");
+
     if (selectedSubject) {
       DeleteSubject(selectedSubject.SubjectId)
         .then((response) => {
@@ -123,14 +130,26 @@ const SubjectPage = () => {
   };
 
   useEffect(() => {
-    GetSubjects()
+    const cache = getSessionCache("adminsubjects");
+    console.log(cache);
+    if (cache) {
+      setSubjects(cache.subjects);
+    } else {
+    GetSubjects() 
       .then((response) => {
         console.log(response);
+        const cache = {
+          subjects: response,
+          timestamp: Date.now(),
+        };
+        setSessionCache("adminsubjects", cache);
+
         setSubjects(response);
       })
       .catch((err) => {
         console.error(err);
       });
+    }
   }, [refresh]);
 
   return (

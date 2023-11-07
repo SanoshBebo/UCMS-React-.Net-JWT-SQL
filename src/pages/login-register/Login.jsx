@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { setUser } from "../../redux/userSlice";
@@ -8,7 +8,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { LoginCall, RegisterCall } from "../../api/Auth";
-
+import bcrypt from 'bcryptjs';
 const Login = () => {
   const navigate = useNavigate();
   const [isRegistering, setIsRegistering] = useState(false);
@@ -21,11 +21,13 @@ const Login = () => {
   const dispatch = useDispatch();
 
   const toggleRegistration = () => {
-    setEmail("");
-    setPassword("");
-    setInvalidCredentials(false);
+    setName(""); 
+    setEmail(""); 
+    setPassword(""); 
+    setInvalidCredentials(false); 
     setIsRegistering(!isRegistering);
   };
+  
 
   const handleChange = (event) => {
     setRole(event.target.value);
@@ -34,7 +36,7 @@ const Login = () => {
   const signIn = async () => {
     const loginData = {
       email: email,
-      password: password,
+      password: btoa(password + "ajlnlsg@DK%&"),
     };
 
     try {
@@ -54,6 +56,7 @@ const Login = () => {
         console.error("Login failed. Server returned an error.");
       }
     } catch (error) {
+      setInvalidCredentials(true);
       console.error("An error occurred while logging in:", error);
     }
   };
@@ -62,21 +65,18 @@ const Login = () => {
     const registrationData = {
       Name: name,
       Email: email,
-      Password: password,
+      Password:btoa(password + "ajlnlsg@DK%&"),
       Role: role,
     };
     try {
       RegisterCall(registrationData).then((response) => {
         if (response.Role) {
-          if (response.Role == "student") {
-            navigate("/student-page");
-          } else if (response.Role == "professor") {
-            navigate("/professor-page");
-          } else if (response.Role == "admin") {
-            navigate("/admin-page");
-          }
-        } else {
-          console.log(response);
+
+          setEmail("");
+          setPassword("");
+          setTimeout(() => {
+          }, 4000);
+          setIsRegistering(!isRegistering);
         }
       });
     } catch (err) {
@@ -117,6 +117,7 @@ const Login = () => {
           <input
             type="email"
             id="email"
+            value={email}
             className="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500"
             placeholder="Your email"
             onChange={(e) => setEmail(e.target.value)}
@@ -134,6 +135,7 @@ const Login = () => {
           <input
             type="password"
             id="password"
+            value={password}
             className="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500"
             placeholder="Your password"
             onChange={(e) => setPassword(e.target.value)}

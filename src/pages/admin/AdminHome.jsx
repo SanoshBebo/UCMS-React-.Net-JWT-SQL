@@ -21,7 +21,6 @@ const AdminHome = () => {
               </h1>
             </div>
           </Link>
-
           <Link to="/admin/venues">
             <div className="p-6 bg-white rounded-lg shadow-lg">
               <h1 className="text-2xl font-semibold text-indigo-600">Venues</h1>

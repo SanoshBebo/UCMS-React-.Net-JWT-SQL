@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CreateCourse, GetAllCourse } from "../../api/Course";
+import { CreateCourse, DeleteCourse, GetAllCourse } from "../../api/Course";
 import { Link } from "react-router-dom";
 import {
   Button,
@@ -10,7 +10,13 @@ import {
   Typography,
   TextField,
   Box,
+  MenuItem,
 } from "@mui/material";
+import {
+  getSessionCache,
+  removeSessionCache,
+  setSessionCache,
+} from "../../components/SessionStoreCache";
 
 const CoursePage = () => {
   const [courses, setCourses] = useState([]);
@@ -27,6 +33,8 @@ const CoursePage = () => {
   };
 
   const addCourse = () => {
+    removeSessionCache("admincourses");
+
     const courseInfo = {
       CourseName: courseName,
       Year: year,
@@ -41,28 +49,55 @@ const CoursePage = () => {
     CreateCourse(courseInfo)
       .then((response) => {
         console.log(response);
+        setTimeout(() => {}, 4000);
+        setRefresh(!refresh);
       })
       .catch((err) => {
         console.error(err);
       });
 
-    setRefresh(!refresh);
+      setIsAddProductModalOpen(false);
   };
+
+  const deleteCourse = (courseid) => {
+    removeSessionCache("admincourses");
+    DeleteCourse(courseid)
+      .then((response) => {
+        console.log(response);
+        setTimeout(() => {}, 4000);
+        setRefresh(!refresh);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
+  
 
   const closeModal = () => {
     setIsAddProductModalOpen(false);
   };
 
   useEffect(() => {
-    GetAllCourse()
-      .then((courses) => {
-        console.log(courses);
-        setCourses(courses);
-        setDataLoaded(true);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    const cache = getSessionCache("admincourses");
+    console.log(cache);
+    if (cache) {
+      setCourses(cache);
+    } else {
+      GetAllCourse()
+        .then((courses) => {
+          console.log(courses);
+          const cache = {
+            courses: courses,
+            timestamp: Date.now(),
+          };
+          setSessionCache("admincourses", cache);
+          setCourses(courses);
+          setDataLoaded(true);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
   }, [refresh]);
 
   return (
@@ -81,6 +116,7 @@ const CoursePage = () => {
           {courses.map((course, index) => (
             <Grid item xs={12} sm={6} md={4} key={index}>
               <Paper elevation={3}>
+                <div></div>
                 <Link to={`/admin/course/${course.CourseId}`}>
                   <div className="flex flex-col items-center gap-2 p-3">
                     <Typography variant="h5" align="center">
@@ -91,6 +127,17 @@ const CoursePage = () => {
                     </Typography>
                   </div>
                 </Link>
+                <div className="flex items-center gap-2 p-3">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={()=> {
+                      
+                      deleteCourse(course.CourseId)}}
+                  >
+                  Delete
+                  </Button>
+                </div>
               </Paper>
             </Grid>
           ))}
@@ -137,9 +184,10 @@ const CoursePage = () => {
             onChange={(e) => setBatch(e.target.value)}
             fullWidth
           >
-            <option value="January">January</option>
-            <option value="July">July</option>
+            <MenuItem value="January">January</MenuItem>
+            <MenuItem value="July">July</MenuItem>
           </Select>
+
           <Button
             variant="contained"
             color="primary"

@@ -8,20 +8,21 @@ import { Link } from "react-router-dom";
 const StudentHome = () => {
   const user = useSelector((state) => state.user.user);
   const [availableCourses, setAvailableCourses] = useState([]);
-  const [assignedSubjectsProf, setAssignedSubjectsProf] = useState([]);
   const [course, setCourse] = useState([]);
   const [semester, setSemester] = useState([]);
   const [subject, setSubject] = useState([]);
+  const [refresh, setRefresh] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleRegister = (courseId) => {
-    console.log(user.UserId);
-    console.log(courseId);
-
     RegisterCourse(courseId, user.UserId)
       .then((res) => {
         console.log(res);
+        setTimeout(() => {
+          
+        }, 5000);
+        setRefresh(!refresh);
       })
       .catch((err) => {
         console.error(err);
@@ -47,7 +48,7 @@ const StudentHome = () => {
     } else {
       navigate("/login");
     }
-  }, []);
+  }, [refresh]);
 
   useEffect(() => {
     if (!user.UserId) {
@@ -88,7 +89,7 @@ const StudentHome = () => {
             Subjects
           </h5>
           <ul className="space-y-4">
-            {subject.map((subject, index) => (
+            {subject.length > 0 ? subject.map((subject, index) => (
               <li
                 key={index}
                 className="flex justify-between items-center border p-4 rounded-lg"
@@ -101,7 +102,13 @@ const StudentHome = () => {
                   View Lecture
                 </Link>
               </li>
-            ))}
+            )):(
+              <div>
+                <p className="text-xl text-gray-600 py-5">
+                Subjects have not been assigned as of now, Please try again later!
+                </p>
+              </div>
+            )}
           </ul>
         </div>
       )}

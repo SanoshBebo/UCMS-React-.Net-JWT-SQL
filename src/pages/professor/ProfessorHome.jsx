@@ -32,7 +32,7 @@ const ProfessorHome = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <div className="bg-white p-6 rounded shadow-md w-full md:w-3/4 lg:w-1/2">
+      <div className="bg-white p-6 rounded shadow-md w-full md:w-3/4 lg:w-3/4">
         <h1 className="text-3xl mb-5">
           Welcome, {profDetails.ProfessorName || "Professor"}!
         </h1>
@@ -50,7 +50,7 @@ const ProfessorHome = () => {
                   </p>
                 </div>
                 <p className="text-base">{subject.SubjectName}</p>
-                <div className="mt-4 space-x-2">
+                <div className="mt-4 space-x-2 flex flex-row">
                   <Link
                     to={`/professor/assignlecture/${subject.SubjectId}/${subject.SemesterId}/${profDetails.UserId}`}
                     className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition duration-300"

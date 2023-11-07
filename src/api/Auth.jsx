@@ -6,21 +6,19 @@ export const RegisterCall = async (registrationData) => {
       headers: {
         "Content-Type": "application/json",
       },
+      
     });
 
-    // Check the response status code to determine if the request was successful
     if (response.data.Role) {
       console.log("Registration successful");
       console.log(response.data); // Access the response data
       return response.data;
     } else {
-      // Handle the situation when the server returns an error response
       console.error("Registration failed. Server returned an error.");
       console.error(response.data); // Access the error message from the server
       throw new Error("Registration failed.");
     }
   } catch (error) {
-    // Handle any network-related errors (e.g., no internet connection)
     console.error(
       "An error occurred while making the registration request:",
       error
