@@ -14,6 +14,9 @@ const Header = () => {
   const handleSignOut = () => {
     localStorage.removeItem("user");
     sessionStorage.removeItem("token");
+    sessionStorage.removeItem("admincourses");
+    sessionStorage.removeItem("adminsubjects");
+    sessionStorage.removeItem("adminvenues");
     navigate("/login");
   };
 

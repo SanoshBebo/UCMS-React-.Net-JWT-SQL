@@ -8,9 +8,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { LoginCall, RegisterCall } from "../../api/Auth";
-import bcrypt from "bcryptjs";
 import { toast, ToastContainer } from "react-toastify";
-
 
 const Login = () => {
   const navigate = useNavigate();
@@ -37,8 +35,6 @@ const Login = () => {
   };
 
   const isEmailValidFormat = (email) => {
-    // This is a simple regex pattern for basic email validation.
-    // You can use a more comprehensive pattern if needed.
     const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
     return emailPattern.test(email);
   };
@@ -219,7 +215,6 @@ const Login = () => {
         </p>
       </div>
       <ToastContainer position="top-right" autoClose={3000} />
-
     </div>
   );
 };

@@ -68,7 +68,11 @@ const LecturesView = () => {
                 <td className="px-4 py-2 text-blue-600 font-semibold">
                   {lecture.LectureName}
                 </td>
-                <td className="px-4 py-2">{lecture.DateTime}</td>
+                <td className="px-4 py-2 flex flex-row gap-4">
+                  <p>{lecture.DateTime.split("T")[0]}</p>
+                  {"    "}
+                  <p>{lecture.DateTime.split("T")[1]}</p>
+                </td>
                 <td className="px-4 py-2">{lecture.SubjectName}</td>
                 <td className="px-4 py-2">{lecture.ProfessorName}</td>
                 <td className="px-4 py-2">{lecture.Series}</td>

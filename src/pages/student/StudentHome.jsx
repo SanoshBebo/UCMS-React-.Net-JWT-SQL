@@ -48,8 +48,8 @@ const StudentHome = () => {
             setAvailableCourses(response.AvailableCourses);
             setDataLoaded(true);
           } else {
+            setAvailableCourses([]);
             setCourseStatus("Started");
-
             setCourse(response.Course);
             setSemester(response.Semester);
             setSubject(response.Subjects);
@@ -134,16 +134,22 @@ const StudentHome = () => {
         ) : courseStatus == "Ended" ? (
           <div className="flex-row items-center justify-center text-center h-full">
             <h2 className="text-3xl font-semibold text-blue-800">
-               Course: {course.CourseName} 
+              Course: {course.CourseName}
             </h2>
-            <h1 className="text-xl py-5">Course Ended on {course.Batch} {parseInt(course.Year) + parseInt(course.CourseDurationInYears)}</h1>
+            <h1 className="text-xl py-5">
+              Course Ended on {course.Batch}{" "}
+              {parseInt(course.Year) + parseInt(course.CourseDurationInYears)}
+            </h1>
           </div>
         ) : courseStatus == "Not Started" ? (
           <div className="flex-row items-center justify-center text-center">
             <h2 className="text-3xl font-semibold text-blue-800">
-               Course: {course.CourseName}
+              Course: {course.CourseName}
             </h2>
-            <h1 className="text-xl py-5">Course Not Started Yet, will commence from {course.Batch} {course.Year}</h1>
+            <h1 className="text-xl py-5">
+              Course Not Started Yet, will commence from {course.Batch}{" "}
+              {course.Year}
+            </h1>
           </div>
         ) : (
           <div>Loading data</div>

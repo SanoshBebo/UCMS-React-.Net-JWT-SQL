@@ -25,6 +25,7 @@ const AdminLayout = ({ children }) => {
     }
     setIsLoadingUser(false);
   }, []);
+
   return (
     <div>
       <Header />

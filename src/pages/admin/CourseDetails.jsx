@@ -7,13 +7,16 @@ import { Typography, Container, Grid, Card, CardContent } from "@mui/material";
 const CourseDetails = () => {
   const { id } = useParams();
   const [semesters, setSemesters] = useState([]);
+  const [course, setCourse] = useState([]);
 
   useEffect(() => {
     GetCourseDetail(id)
       .then((response) => {
+        console.log(response);
         const sortedSemesters = response.Semesters.sort((a, b) =>
           a.SemesterName.localeCompare(b.SemesterName)
         );
+        setCourse(response.Course);
         setSemesters(sortedSemesters);
         console.log(response);
       })
@@ -31,7 +34,7 @@ const CourseDetails = () => {
         align="center"
         gutterBottom
       >
-        Semester Details
+        {course.CourseName} - Semester Details
       </Typography>
       <Grid container spacing={2}>
         {semesters.map((semester, index) => (
