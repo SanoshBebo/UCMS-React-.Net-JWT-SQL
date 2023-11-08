@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { setUser } from "../../redux/userSlice";
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
@@ -8,7 +8,10 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { LoginCall, RegisterCall } from "../../api/Auth";
-import bcrypt from 'bcryptjs';
+import bcrypt from "bcryptjs";
+import { toast, ToastContainer } from "react-toastify";
+
+
 const Login = () => {
   const navigate = useNavigate();
   const [isRegistering, setIsRegistering] = useState(false);
@@ -17,71 +20,86 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
   const [invalidCredentials, setInvalidCredentials] = useState(false);
+  const [isEmailValid, setIsEmailValid] = useState(true);
 
   const dispatch = useDispatch();
 
   const toggleRegistration = () => {
-    setName(""); 
-    setEmail(""); 
-    setPassword(""); 
-    setInvalidCredentials(false); 
+    setName("");
+    setEmail("");
+    setPassword("");
+    setInvalidCredentials(false);
     setIsRegistering(!isRegistering);
   };
-  
 
   const handleChange = (event) => {
     setRole(event.target.value);
   };
 
-  const signIn = async () => {
-    const loginData = {
-      email: email,
-      password: btoa(password + "ajlnlsg@DK%&"),
-    };
+  const isEmailValidFormat = (email) => {
+    // This is a simple regex pattern for basic email validation.
+    // You can use a more comprehensive pattern if needed.
+    const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+    return emailPattern.test(email);
+  };
 
-    try {
-      const response = await LoginCall(loginData);
-      if (response.User.Role) {
-        console.log("Login successful");
-        dispatch(setUser(response.User));
-        localStorage.setItem("user", JSON.stringify(response.User));
-        if (response.User.Role == "student") {
-          navigate("/student-page");
-        } else if (response.User.Role == "professor") {
-          navigate("/professor-page");
-        } else if (response.User.Role == "admin") {
-          navigate("/admin-page");
+  const signIn = async () => {
+    if (isEmailValid) {
+      const loginData = {
+        email: email,
+        password: btoa(password + "ajlnlsg@DK%&"),
+      };
+
+      try {
+        const response = await LoginCall(loginData);
+        if (response.User.Role) {
+          console.log("Login successful");
+          dispatch(setUser(response.User));
+          localStorage.setItem("user", JSON.stringify(response.User));
+          if (response.User.Role === "student") {
+            navigate("/student-page");
+          } else if (response.User.Role === "professor") {
+            navigate("/professor-page");
+          } else if (response.User.Role === "admin") {
+            navigate("/admin-page");
+          }
+        } else {
+          console.error("Login failed. Server returned an error.");
         }
-      } else {
-        console.error("Login failed. Server returned an error.");
+      } catch (error) {
+        setInvalidCredentials(true);
+        console.error("An error occurred while logging in:", error);
       }
-    } catch (error) {
-      setInvalidCredentials(true);
-      console.error("An error occurred while logging in:", error);
+    } else {
+      console.error("Invalid email format");
     }
   };
 
   const signUp = async () => {
-    const registrationData = {
-      Name: name,
-      Email: email,
-      Password:btoa(password + "ajlnlsg@DK%&"),
-      Role: role,
-    };
-    try {
-      RegisterCall(registrationData).then((response) => {
-        if (response.Role) {
-
-          setEmail("");
-          setPassword("");
-          setTimeout(() => {
-          }, 4000);
-          setIsRegistering(!isRegistering);
-        }
-      });
-    } catch (err) {
-      setInvalidCredentials(true);
-      console.error(err);
+    if (isEmailValid) {
+      const registrationData = {
+        Name: name,
+        Email: email,
+        Password: btoa(password + "ajlnlsg@DK%&"),
+        Role: role,
+      };
+      try {
+        RegisterCall(registrationData).then((response) => {
+          if (response.Role) {
+            setEmail("");
+            setPassword("");
+            toast.success("Registration Successful");
+            setTimeout(() => {}, 4000);
+            setIsRegistering(!isRegistering);
+          }
+        });
+      } catch (err) {
+        setInvalidCredentials(true);
+        toast.error(err.response);
+        console.error(err);
+      }
+    } else {
+      console.error("Invalid email format");
     }
   };
 
@@ -89,7 +107,7 @@ const Login = () => {
     <div className="min-h-screen bg-gradient-to-r from-slate-500 to-blue-600 flex flex-col justify-center items-center">
       <div className="bg-white p-8 rounded shadow-md w-96 transition-transform transform hover:scale-105">
         <h2 className="text-2xl font-semibold mb-4 text-center ">
-          {isRegistering ? "Customer Register" : "Customer Login"}
+          {isRegistering ? "Register" : "Login"}
         </h2>
         {isRegistering && (
           <div className="mb-4">
@@ -118,10 +136,24 @@ const Login = () => {
             type="email"
             id="email"
             value={email}
-            className="w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500"
+            className={`w-full px-4 py-2 border rounded focus:outline-none ${
+              isEmailValid ? "focus:border-blue-500" : "border-red-500"
+            }`}
             placeholder="Your email"
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              const enteredEmail = e.target.value;
+              setEmail(enteredEmail);
+              setIsEmailValid(isEmailValidFormat(enteredEmail));
+            }}
           />
+          {!isEmailValid && (
+            <div>
+              <p className="text-red-500">
+                Invalid email format. Please enter a valid email.
+              </p>
+            </div>
+          )}
+
           {invalidCredentials && (
             <div>
               <p className="text-red-500">Invalid Credentials</p>
@@ -186,6 +218,8 @@ const Login = () => {
           </a>
         </p>
       </div>
+      <ToastContainer position="top-right" autoClose={3000} />
+
     </div>
   );
 };

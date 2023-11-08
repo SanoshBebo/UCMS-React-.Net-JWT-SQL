@@ -16,7 +16,7 @@ export const AssignLectureProfessor = async (
   semesterId,
   professorId
 ) => {
-  const response = await axios.post(
+  const response = await axios.get(
     `api/Professor/assignlecture/${subjectId}/${semesterId}/${professorId}`
   );
   return response.data;

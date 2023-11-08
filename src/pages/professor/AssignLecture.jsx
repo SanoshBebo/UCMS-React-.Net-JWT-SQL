@@ -54,8 +54,7 @@ const AssignLecture = () => {
         console.log(res);
         toast.success("Lecture Added Successfully");
         setTimeout(() => {}, 3000);
-
-        navigate(-1);
+        navigate(`/professor/viewlecture/${SubjectId}/${SemesterId}/${UserId}`);
       })
       .catch((err) => {
         console.error(err);

@@ -8,6 +8,7 @@ export const GetSubjects = async () => {
 export const GetCompleteStudentInfo = async (userId) => {
   try {
     const response = await axios.get(`/api/Student/studenthome/${userId}`);
+    console.log(response)
     return response.data; // Return the response data
   } catch (error) {
     console.error(error);

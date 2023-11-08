@@ -9,20 +9,9 @@ export const RegisterCall = async (registrationData) => {
       
     });
 
-    if (response.data.Role) {
-      console.log("Registration successful");
-      console.log(response.data); // Access the response data
-      return response.data;
-    } else {
-      console.error("Registration failed. Server returned an error.");
-      console.error(response.data); // Access the error message from the server
-      throw new Error("Registration failed.");
-    }
+    return response.data; // Return the response data
   } catch (error) {
-    console.error(
-      "An error occurred while making the registration request:",
-      error
-    );
+    console.error(error);
     throw error;
   }
 };
